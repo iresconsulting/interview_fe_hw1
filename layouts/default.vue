@@ -23,7 +23,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { dataStore } from '~/store/index'
 
 @Component
 export default class Default extends Vue {
