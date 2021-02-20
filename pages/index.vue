@@ -1,85 +1,151 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <main style="margin-top: 150px; display: flex; flex-direction: column">
-          <Logo />
-          <h1 class="title">nuxt-ts-docker-template</h1>
-          <div class="links" style="align-self: center">
-            <a href="https://nuxtjs.org/" target="_blank" rel="noopener noreferrer" class="button--green">
-              Documentation
-            </a>
-            <a href="https://github.com/nuxt/nuxt.js" target="_blank" rel="noopener noreferrer" class="button--grey">
-              GitHub
-            </a>
+  <div>
+    <div class="wrapper">
+      <div class="wrapper__title">Repositories</div>
+      <div class="wrapper__cardBox">
+        <div class="card" v-for="item in getData" :key="item.id">
+          <div class="card__title">{{ item.name }}</div>
+          <div class="card__desc">
+            <p>{{ !item.description ? 'No description provided...' : item.description }}</p>
+            <div class="card__descUrl"><a :href="item.url" target="_blank" class="card__descUrlLink">Link</a></div>
+            <div class="card__descDate">Latest commit: {{ item.updated_at }}</div>
           </div>
-          <div style="margin-top: 20px; font-size: 16px">Vuex Integrations with nuxt-property-decorator</div>
-          <div style="margin-top: 20px; font-size: 16px">
-            Vuex: <span style="color: green">{{ storeData }}</span>
-          </div>
-          <div style="margin-top: 20px; font-size: 16px">
-            Axios: <span style="color: green">{{ axiosIsWorking }}</span>
-          </div>
-        </main>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div style="width: 100%; display: flex; align-items: center; margin-top: 12px">
-          Node-Sass:&nbsp;<button class="btn btn--primary">Sass Is Working...</button>
         </div>
       </div>
+      <div class="wrapper__footer" v-show="pageData.isEndOfPage">End Of Page...</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import Logo from '~/components/Logo.vue'
+import { Component, Vue, Watch } from 'nuxt-property-decorator'
 import { dataStore } from '~/store/index'
-import { $axios } from '~/utils/api'
+import { PageData, Data } from '~/types/index'
 
 @Component({
-  components: {
-    Logo,
-  },
 })
 export default class Index extends Vue {
-  private axiosIsWorking: any = ''
+  private get getData(): Array<Data> {
+    return dataStore.retrieveData
+  }
 
-  private get storeData(): string {
-    return dataStore.data ? dataStore.data.property : ''
+  private pageData: PageData = {
+    currentShowing: 12,
+    isEndOfPage: false
+  }
+
+  private async loadData(val: number): Promise<void> {
+    await this.$nextTick(async () => {
+      this.$nuxt.$loading.start()
+      await dataStore.getData(val)
+      this.$nuxt.$loading.finish()
+    })
+  }
+
+  @Watch('getData')
+  private onPageChange(): void {
+    if(dataStore.retrieveDataLength < this.pageData.currentShowing) {
+      this.pageData.isEndOfPage = true
+      window.removeEventListener('scroll', this.increasePageShowingHelper)
+    }
+  }
+
+  private async increasePageShowingHelper(): Promise<void> {
+    const {
+      scrollTop,
+      scrollHeight,
+      clientHeight
+    } = document.documentElement
+
+    if (scrollTop + clientHeight >= scrollHeight - 5) {
+      this.pageData.currentShowing += 12
+      await this.loadData(this.pageData.currentShowing)
+    }
   }
 
   private async created(): Promise<void> {
-    await dataStore.getData()
-    console.log(dataStore)
-    console.log($axios)
-    this.axiosIsWorking = $axios
+    await this.loadData(this.pageData.currentShowing)
+  }
+
+  private mounted(): void {
+    window.scrollTo(0, 0)
+    window.addEventListener('scroll', this.increasePageShowingHelper)
+  }
+
+  private beforeDestroy(): void {
+    window.removeEventListener('scroll', this.increasePageShowingHelper)
   }
 }
 </script>
 
-<style>
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+<style lang="scss">
+@import '~/assets/scss/main';
+
+.wrapper {
+  width: 100%;
+  &__title {
+    font-size: $fzXL;
+    margin-bottom: $spacingL;
+    color: $primary;
+  }
+  &__cardBox {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $primary;
+    font-size: $fzML;
+  }
 }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
+.card {
+  height: 155px;
+  width: 100%;
+  margin: $spacingM 15px;
+  padding: $spacingM $spacingM;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  -webkit-box-shadow: 3px 4px 3px 1px rgba(0,0,0,0.1);
+  -moz-box-shadow: 3px 4px 3px 1px rgba(0,0,0,0.1);
+  box-shadow: 3px 4px 3px 1px rgba(0,0,0,0.1);
+  @include grid-lg {
+    width: 33%;
+  }
+  @include grid-xl {
+    width: 25%;
+  }
+  &__title {
+    font-size: $fzL;
+    margin-bottom: $spacingM;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: $spacingS 0;
+  }
+  &__desc {
+    > p {
+      margin-bottom: $spacingM;
+      line-height: 1.25;
+      height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: $darken;
+    }
+    &Url {
+      margin-bottom: $spacingM;
+      > a {
+        color: $secondary;
+      }
+    }
+    &Date {
+      color: $lighten;
+      font-size: $fzSM;
+    }
+  }
 }
 </style>

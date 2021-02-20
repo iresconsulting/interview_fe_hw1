@@ -3,6 +3,10 @@
   margin: 0 auto;
   padding-left: 6px;
   padding-right: 6px;
+  &__mg {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
 }
 .row {
   margin-left: -6px;

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt-ts",
+    "dev": "cross-env NUXT_ENV_API_URL=https://api.github.com NUXT_ENV_GH_TOKEN=a1a3d9122599427ae460555031910ab60cced54d nuxt-ts",
     "build": "cross-env nuxt-ts build",
     "build:bind": "cross-env NUXT_PORT=3000 NUXT_HOST=0.0.0.0 nuxt-ts build",
     "start": "cross-env nuxt-ts start",

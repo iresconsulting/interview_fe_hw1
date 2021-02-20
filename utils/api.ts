@@ -9,10 +9,6 @@ let $axios: AxiosInstance
 export function initializeAxios(axiosInstance: NuxtAxiosInstance) {
   $nuxtAxiosInstance = axiosInstance
   $axios = $nuxtAxiosInstance.create({
-    headers: {
-      'Time-Zone': 8,
-      // 'Accept-Language': window ? navigator.language : '',
-    },
     baseURL: process.env.API_URL,
     timeout,
   })

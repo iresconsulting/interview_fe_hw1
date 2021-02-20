@@ -1,63 +1,54 @@
 <template>
   <div>
-    <Nuxt />
+    <header class="header">
+      <div class="container container__mg">
+        <div class="row">
+          <div class="col">
+            <div class="header__title" @click="handleScrollTop">github.com/keiko15678</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="container container__mg">
+      <div class="row">
+        <div class="col">
+          <main class="body">
+            <Nuxt />
+          </main>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { dataStore } from '~/store/index'
 
-@Component({
-  middleware: ['static']
-})
-export default class Default extends Vue { }
+@Component
+export default class Default extends Vue {
+  private async handleScrollTop(): Promise<void> {
+    window.scrollTo(0, 0)
+  }
+}
 </script>
-<style>
-html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
+<style lang="scss">
+@import '~/assets/scss/utils/variables';
+
+.header {
+  position: fixed;
+  width: 100vw;
+  padding: $spacingL 0;
+  background-color: $primary;
+  font-size: $fzL;
+  color: $white;
+  cursor: pointer;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-}
-
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+.body {
+  width: 100%;
+  padding-top: 64px;
+  margin-top: $spacingXXL;
+  margin-bottom: $spacingXXL;
 }
 </style>
