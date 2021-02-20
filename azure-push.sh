@@ -13,7 +13,7 @@ docker build --file Dockerfile.azure -t $5 .
 
 echo ⭐ Image built locally...
 
-docker tag personal-portfolio $3.azurecr.io/$5/frontend
+docker tag $5 $3.azurecr.io/$5/frontend
 docker push $3.azurecr.io/$5/frontend
 
 echo 🤘 Deploy Azure App Service complete.

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DOCKER_IMAGE_NAME=nuxt-ts-docker-template
-DOCKER_REMOTE_ADDR=keiko15678/ire:nuxt-ts-docker-template
+DOCKER_IMAGE_NAME=hw-interview
+DOCKER_REMOTE_ADDR=keiko15678/ire:hw-interview
 DOCKER_DEV_FILE_PATH=Dockerfile.dev
 DOCKER_PRD_FILE_PATH=Dockerfile
 
